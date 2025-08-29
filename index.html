@@ -1,0 +1,395 @@
+<html>
+    <head>
+        <title>Calculadora de CORE</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript">
+            const getInputValue = () => {
+                return Number(document.getElementById("pantalla").value);
+            };
+            
+
+            const setInputValue = (value) => {
+                document.getElementById("pantalla").value = value;
+            };
+
+            const vaciarInput = () => {
+                document.getElementById("pantalla").value = "";
+            };
+
+            const validNumber = () => {
+                if (Number.isNaN(getInputValue())) {
+                    setInputValue("Error");
+                    return false;
+                }
+                return true;
+            };
+
+            const rellenarInfo = () => {
+                const resultadoInput = getInputValue();
+                let mensaje = "";
+
+                if (Number.isNaN(resultadoInput)) {
+                    mensaje = "ERROR"
+                } else if (resultadoInput < 100) {
+                    mensaje = "Info: El resultado es menor que 100"
+                } else if (resultadoInput < 200) {
+                    mensaje = "Info: El resultado está entre 100 y 200"
+                } else {
+                    mensaje = "Info: El resultado es superior a 200"
+                }
+
+                document.getElementById("info").innerHTML = mensaje;
+            };
+
+            //opcional
+            let listaValores = "<ul>";
+            const cierreListaAcumulador = "</ul>";
+            let arrayValoresAcumulados = [];
+            const addToList = () => {
+                let inputValue = getInputValue();
+                listaValores += "<li>" + inputValue + "</li>";
+                let listaCerrada = listaValores + cierreListaAcumulador;
+                document.getElementById("valoresAcumulador").innerHTML = listaCerrada;
+            };
+
+            const compararNumeros = () => {
+                let resultado = "";
+                let getValueInputAComparar = Number(document.getElementById("numeroAComparar").value);
+                let valorInput = getInputValue();
+
+                if (getValueInputAComparar >= valorInput) {
+                    resultado = "Mayor o igual que el input.";
+                } else {
+                    resultado = "Menor que el input.";
+            }
+
+            document.getElementById("resultadoComparacion").innerHTML = resultado;
+        };
+
+
+            const addToListArray =() => {
+                let listaValoresArray = "<ul>";
+                arrayValoresAcumulados.push(getInputValue());
+                for (let i = 0; i < arrayValoresAcumulados.length; i++) {
+                    listaValoresArray += "<li>" + arrayValoresAcumulados[i] + "</li>";
+                }
+                actualizarAcumulador();
+                document.getElementById("valoresAcumuladorArray").innerHTML = listaValoresArray + cierreListaAcumulador;
+            };
+
+
+            //operaciones unitarias 
+            const sq = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                let inputValue = getInputValue();
+                setInputValue(inputValue * inputValue);
+                rellenarInfo();
+            };
+            
+            const fact = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                let inputValue = getInputValue();
+                let resultado = 1;
+                for (let i = inputValue; i > 1 ; i--) {
+                    resultado *= i;
+                }
+                setInputValue(resultado); 
+                rellenarInfo();
+            };
+             //extra
+            const sqrt = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                let inputValue = getInputValue();
+                let resultado = Math.sqrt(inputValue);
+                setInputValue(resultado);
+                rellenarInfo();
+            };
+
+            const valorAbs = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                let inputValue = getInputValue();
+                let resultado = Math.abs(inputValue);
+                setInputValue(resultado);
+                rellenarInfo();
+            };
+
+            const cubo = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                let inputValue = getInputValue();
+                setInputValue(inputValue * inputValue * inputValue);
+                rellenarInfo();
+            };
+
+            //operaciones binarias
+            let acumulador = 0;
+            let operador = null;
+
+            const acumula = n => {
+                switch (operador) {
+                    case null:
+                    case "":
+                    case "=":
+                        acumulador = n;
+                        break;
+                    case "+":
+                        acumulador += n;
+                        break;
+                    case "-":
+                        acumulador -= n;
+                        break;
+                    case "*":
+                        acumulador *= n;
+                        break;  
+                    case "/":
+                        acumulador /= n;
+                        break;  
+                }
+            };
+
+            const actualizarAcumulador = () => {
+                document.getElementById("displayAcumulador").textContent = "Acumulador: " + acumulador;
+            };
+
+
+
+            const add = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                acumula(getInputValue());
+                operador = "+";
+                vaciarInput();
+                rellenarInfo();
+                actualizarAcumulador();
+            };
+
+            const sub = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                acumula(getInputValue());
+                operador = "-";
+                vaciarInput();
+                rellenarInfo();
+                actualizarAcumulador();
+            };
+
+            const mul = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                acumula(getInputValue());
+                operador = "*";
+                vaciarInput();
+                rellenarInfo();
+                actualizarAcumulador();
+            };
+
+            const div = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                acumula(getInputValue());
+                operador = "/";
+                vaciarInput();
+                rellenarInfo();
+                actualizarAcumulador();
+            };
+            
+
+            
+            const equal = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                acumula(getInputValue());
+                operador = null;
+                vaciarInput();
+                setInputValue(acumulador);
+                rellenarInfo();
+                actualizarAcumulador();
+            };
+
+            const clear = () => {
+                if (!validNumber()) {
+                    return;
+                }
+                acumulador = 0;
+                operador = "";
+                vaciarInput();
+                rellenarInfo();
+                actualizarAcumulador();
+                document.getElementById("valoresAcumulador").innerHTML = "";
+                document.getElementById("valoresAcumuladorArray").innerHTML = "";
+                document.getElementById("info").innerHTML = "";
+                listaValores = "<ul>";
+                arrayValoresAcumulados = [];
+                
+            };
+
+            const clearScreen = () => {
+                document.getElementById("pantalla").value = "";
+                actualizarAcumulador();
+            };
+
+            const clearAll = () => {
+                clearScreen();
+                acumulador = 0;
+                actualizarAcumulador();
+            };
+
+            const insertar = s => {
+                const pantalla = document.getElementById("pantalla");
+                if (s === "C") {
+                    pantalla.value = "";
+                } else {
+                    pantalla.value += s;
+                }
+            };
+
+
+            //extra el contador de clicks
+            let contadorClicks = 0;
+            const ocultarInput = () => {
+                contadorClicks++;
+                document.getElementById("contadorClicks").textContent = contadorClicks;
+                if (contadorClicks === 3) {
+                    document.getElementById("input_texto").style.display = "none";
+                }
+            };
+
+            
+            
+            const onload = () => {
+                //operaciones unitarias
+                document.getElementById("cuadrado").addEventListener("click", sq);
+                document.getElementById("factorial").addEventListener("click", fact);
+                //EXTRA
+                document.getElementById("raiz").addEventListener("click", sqrt);
+                document.getElementById("valorabs").addEventListener("click", valorAbs);
+                document.getElementById("cubo").addEventListener("click", cubo);
+                //operaciones binarias
+                document.getElementById("suma").addEventListener("click", add);
+                document.getElementById("resta").addEventListener("click", sub);
+                document.getElementById("multiplicacion").addEventListener("click", mul);
+                document.getElementById("division").addEventListener("click", div);
+                document.getElementById("igual").addEventListener("click", equal); 
+                //limpieza
+                document.getElementById("clearScreen").addEventListener("click", clearScreen);
+                document.getElementById("clearAll").addEventListener("click", clearAll);
+                //manejo de pulsacion al texto
+                document.getElementById("input_texto").addEventListener("click", vaciarInput);
+                //extra
+                document.getElementById("ocultador").addEventListener("click", ocultarInput);
+                document.getElementById("compararNumeros").addEventListener("click", compararNumeros);
+                document.getElementById("addValueToList").addEventListener("click", addToList);
+                document.getElementById("addValueToListArray").addEventListener("click", addToListArray);
+                document.getElementById("clear").addEventListener("click", clear);
+
+            };
+
+            window.onload = onload;
+        </script>   
+    </head>
+    <body style="background-color: pink;">
+        <h1 class="cabecera" title="Calculadora de CORE">Calculadora de CORE</h1>
+    
+        
+        <div id="input_texto">
+            <label for="pantalla">Escriba un número:</label>
+            <input type="text" id="pantalla">
+        </div>
+
+        <div id="displayAcumulador">Acumulador: 0</div>
+        <h3 class="cabecera" title="Unitarias">Operaciones unitarias</h3>
+        <div class="operaciones">
+            <button id="cuadrado"> x<sup>2</sup> </button>
+            <button id="factorial"> x! </button>
+            
+        </div>
+
+        <div class="extra"> EXTRA</div>
+            <button id="raiz"> &#8730; </button>
+            <button id="valorabs"> |x| </button>
+            <button id="cubo"> x<sup>3</sup> </button>
+        </div>
+
+
+
+
+        <p>Número de clicks: <span id="contadorClicks">0</span></p>
+        <button id="ocultador">Púlsame 3 veces y ocultaré cosas</button>
+        
+        <div id="tecladoMatricial">
+            <h4>Teclado Matricial</h4>
+            <div id="teclas">
+                <button onclick="insertar('1')">1</button>
+                <button onclick="insertar('2')">2</button>
+                <button onclick="insertar('3')">3</button>
+                <button onclick="insertar('4')">4</button>
+                <button onclick="insertar('5')">5</button>
+                <button onclick="insertar('6')">6</button>
+                <button onclick="insertar('7')">7</button>
+                <button onclick="insertar('8')">8</button>
+                <button onclick="insertar('9')">9</button>
+                <button onclick="insertar('.')">.</button>
+                <button onclick="insertar('C')">C</button>
+            </div>
+        </div>
+        
+
+        <h2 id="info" class="grande" title="Info sobre el número"> Info sobre el número</h2>
+
+        <h3 class="cabecera" title="Binarias">Operaciones binarias</h3>
+        <div class="operaciones">
+            <button id="suma"> + </button>
+            <button id="resta"> - </button>
+            <button id="multiplicacion"> * </button>
+            <button id="division"> / </button>
+            <button id="igual"> = </button>
+        </div>
+
+        
+        <div class="opcionales"> 
+            <h3 class="cabecera">Elementos opcionales</h3>
+            <button id="addValueToList">Añadir a lista</button>
+            <button id="addValueToListArray">Añadir a lista con Array</button>
+            <button id="clear">Clear</button>
+
+        
+            <div class="listadoOperaciones">
+                <h4>Listado:</h4>
+                <div id="valoresAcumulador"></div>
+            </div>
+        
+            <div class="listadoOperaciones">
+                <h4>Listado con Array:</h4>
+                <div id="valoresAcumuladorArray"></div>
+            </div>
+        
+            <h4>Input comparador:</h4>
+            <label for="pantalla">Número a comparar con input:</label>
+            <input type="text" id="numeroAComparar">
+            <button id="compararNumeros">Compara!</button>
+            <p>Este número es: <span id="resultadoComparacion"></span></p>
+        </div>
+        
+
+        <h3 class="cabecera" title="Unitarias">Limpieza</h3>
+        <div class="operaciones">
+            <button id="clearScreen">C</button>
+            <button id="clearAll">AC</button>
+        </div>
+
+    </body>
+</html>
